@@ -72,3 +72,29 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
+
+/* Very large displays: scale the interface, don't only widen it.
+ *
+ * The hub capped at max-w-5xl with no step above it, so measured at a fixed
+ * 16px root it filled 53% of a 1080p screen, 40% of a 1440p monitor and 27%
+ * of a 3840px TV — the whole site sat in a narrow column with most of the
+ * panel empty.
+ *
+ * Widening alone is the wrong fix for a television: the constraint there is
+ * viewing distance, not column count. Scaling the root font size moves type,
+ * spacing, control sizes and the rem-valued max-width together, because the
+ * layout is built in rem throughout (80rem becomes 1680px at a 21px root).
+ *
+ * Thresholds sit above the common desktop sizes, so a 1080p or 1440p screen
+ * renders exactly as it did before. */
+@media (min-width: 2200px) {
+  :root {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 3000px) {
+  :root {
+    font-size: 21px;
+  }
+}

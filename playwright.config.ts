@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:3100",
     trace: "on-first-retry",
     // The site auto-detects RU vs EN from the browser's own locale when
     // there's no saved preference — Chromium's default locale varies by
@@ -17,8 +17,13 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
+    // Serves out/, not `next dev` — see scripts/serve-out.mjs. The dev server
+    // is a different program producing a different bundle, so a suite run
+    // against it says nothing about the static export that actually deploys
+    // (basePath handling in particular only exists in the export).
+    // npm run test:e2e builds first.
+    command: "node scripts/serve-out.mjs",
+    url: "http://localhost:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
   },

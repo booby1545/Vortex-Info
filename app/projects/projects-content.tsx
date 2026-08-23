@@ -22,7 +22,7 @@ export function ProjectsContent() {
         </p>
       </div>
 
-      <div className="grid w-full gap-6 sm:grid-cols-2">
+      <div className="grid w-full gap-6 sm:grid-cols-2 xl:grid-cols-3">
         {PROJECTS.map((project) => (
           <div
             key={project.slug}

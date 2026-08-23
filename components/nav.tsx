@@ -58,7 +58,7 @@ export function Nav() {
       <nav
         ref={containerRef}
         onMouseLeave={() => setHoveredHref(null)}
-        className="relative mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2 px-4 py-5"
+        className="relative mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-2 px-4 py-5 2xl:max-w-[80rem]"
       >
         {glass && (
           <motion.div
