@@ -17,6 +17,10 @@
 /.next/
 /out/
 
+# raw capture frames for the Projects-page GIFs — intermediate output of
+# scripts/capture-project-frames.mjs; the built .gif files are committed
+/.frames/
+
 # production
 /build
 
