@@ -10,10 +10,25 @@ export interface Project {
   stack: string[];
   githubUrl: string;
   liveUrl?: string;
+  /** A desktop app has nothing to open in a tab — it has something to fetch.
+   *  Separate from `liveUrl` so the button can say which one it is. */
+  downloadUrl?: string;
   gif: string;
 }
 
 export const PROJECTS: Project[] = [
+  {
+    slug: "lumen",
+    title: "Lumen",
+    description: {
+      ru: "Стеклянная музыкальная капсула для Windows 11 в духе Dynamic Island: висит поверх всего, показывает трек из любого источника с системными медиа-контролами и разворачивается по наведению. Синхронные тексты песен, громкость колёсиком прямо по кнопке на панели задач, буст выше 100% и бас-буст через перехват звука самого приложения, статус в Discord с обложкой, файлы для оверлея в OBS. Интерфейс на русском и английском. Один портативный exe на 4,4 МБ: без установщика, без телеметрии и без опроса системы в простое.",
+      en: "A Dynamic Island-style glass music capsule for Windows 11: floats above everything, shows whatever is playing through the system media controls, and expands on hover. Time-synced lyrics, per-app volume by scrolling its taskbar button, boost past 100% and bass boost through a loopback tap on the app's own audio, Discord presence with cover art, and file output for an OBS overlay. English and Russian throughout. One portable 4.4 MB exe — no installer, no telemetry, nothing polled at idle.",
+    },
+    stack: ["Rust", "Tauri 2", "Svelte 5", "Windows API"],
+    githubUrl: "https://github.com/flexeykinDev/lumen",
+    downloadUrl: "https://github.com/flexeykinDev/lumen/releases/latest",
+    gif: "/projects/lumen.gif",
+  },
   {
     slug: "dota-counter-web",
     title: "The Counter Web",

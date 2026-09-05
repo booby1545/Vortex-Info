@@ -15,7 +15,7 @@
  */
 import { chromium } from "playwright-core";
 import { createServer } from "node:http";
-import { createReadStream, existsSync, mkdirSync, rmSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { stat } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 
@@ -23,6 +23,7 @@ const HERE = new URL(".", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$
 const FRAMES = join(HERE, "..", ".frames");
 const DBD_OUT = "D:/VScode/dev/debug/dbd-perk-randomizer/out";
 const DOTA_DIR = "D:/VScode/dev/debug/the-counter-web DOTA2";
+const LUMEN_DOCS = "D:/VScode/dev/debug/lumen/docs";
 
 const TYPES = {
   ".html": "text/html; charset=utf-8",
@@ -179,8 +180,37 @@ async function captureDota(browser) {
   console.log(`dota: ${n} frames at ${clip.width}x${clip.height}`);
 }
 
+/* Lumen is a desktop app, so there is nothing here to drive: it has no page,
+ * and a screen capture of the capsule would bring whatever desktop happens to
+ * be behind its transparent window along with it. What it does have is its own
+ * key art — an SVG of the expanded capsule at rest, the same one its README
+ * leads with. Rendered through the browser rather than an SVG library so the
+ * "Segoe UI Variable" stack it asks for is the one that actually resolves;
+ * librsvg would silently fall back and reflow every label.
+ *
+ * Inlined into a page instead of navigated to as a file, because a standalone
+ * SVG document gets centred with the viewer's own margins around it and the
+ * capture would carry a border of them. */
+async function captureLumen(browser) {
+  const art = join(LUMEN_DOCS, "preview.svg");
+  if (!existsSync(art)) {
+    console.log("skip lumen — no key art at " + art);
+    return;
+  }
+  const dir = frameDir("lumen");
+  const page = await browser.newPage({ viewport: { width: 1280, height: 640 } });
+  await page.setContent(
+    `<style>html,body{margin:0;background:#0a0c12}svg{display:block}</style>${readFileSync(art, "utf8")}`,
+  );
+  await page.waitForTimeout(400); // let the fonts land before measuring anything
+  await page.screenshot({ path: join(dir, "000.png") });
+  await page.close();
+  console.log("lumen: 1 frame at 1280x640");
+}
+
 const browser = await chromium.launch();
 await captureDbd(browser);
 await captureDota(browser);
+await captureLumen(browser);
 await browser.close();
 console.log("frames in " + FRAMES);

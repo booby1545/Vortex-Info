@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderGit, ExternalLink } from "lucide-react";
+import { FolderGit, ExternalLink, Download } from "lucide-react";
 import { PROJECTS } from "@/data/projects";
 import { withBasePath } from "@/lib/asset-path";
 import { useT } from "@/lib/i18n";
@@ -26,6 +26,7 @@ export function ProjectsContent() {
         {PROJECTS.map((project) => (
           <div
             key={project.slug}
+            data-project={project.slug}
             className="flex flex-col overflow-hidden rounded-2xl border border-border bg-surface"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- animated GIF, must stay unoptimized to keep frames */}
@@ -74,6 +75,17 @@ export function ProjectsContent() {
                   >
                     <ExternalLink className="size-4" />
                     {t({ ru: "Открыть демо", en: "Open demo" })}
+                  </a>
+                )}
+                {project.downloadUrl && (
+                  <a
+                    href={project.downloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-transform hover:scale-105 active:scale-95"
+                  >
+                    <Download className="size-4" />
+                    {t({ ru: "Скачать", en: "Download" })}
                   </a>
                 )}
               </div>

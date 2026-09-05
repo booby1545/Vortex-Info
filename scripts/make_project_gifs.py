@@ -1,11 +1,11 @@
 """Builds the Projects-page GIFs.
 
-Two of the three are real capture sequences of the applications running,
+Two of the four are real capture sequences of the applications running,
 produced by scripts/capture-project-frames.mjs into .frames/ — run that first.
-The third (roflo-pinterest) is a Windows tray app that cannot be driven by a
-browser, so it stays a slideshow of its README graphics; those are pure-white
-diagrams, and pasted straight onto a dark card they read as a bright slab, so
-they get converted to dark here.
+The other two are Windows desktop apps that no browser can drive, so they are
+slideshows of their own graphics. roflo-pinterest's are pure-white diagrams,
+and pasted straight onto a dark card they read as a bright slab, so they get
+converted to dark here; Lumen's are already dark and go on as they are.
 
     node scripts/capture-project-frames.mjs
     python scripts/make_project_gifs.py
@@ -217,6 +217,34 @@ def main():
         build_gif(dota, OUT_DIR / "dota-counter-web.gif", hold_ms=1500, crossfade=False)
     else:
         print("skip dota — no frames, run capture-project-frames.mjs first")
+
+    # Key art, then the settings window. Frame order matters more than it looks:
+    # the first frame is what a viewer sees before the GIF has looped, and it
+    # should be the capsule rather than a dialog. Held longer than the others —
+    # the settings shot is dense and needs a moment to read.
+    #
+    # Only the English settings capture, though both exist. Side by side at
+    # 400px the two languages are the same window with the same layout and
+    # unreadable type, so the pair reads as a stutter rather than as evidence
+    # the app is localised; the card's own text says that instead.
+    #
+    # No crossfade, and the reason is size rather than taste. These frames
+    # share almost no pixels, so every blended step between them is a full new
+    # image: crossfading three of them cost 1535 KB against 247 KB for the
+    # cuts, and dropping the palette to 48 colours clawed back only 15% of that
+    # because the fades, not the colour depth, are the file.
+    lumen_docs = Path("D:/VScode/dev/debug/lumen/docs")
+    lumen = captured("lumen")
+    settings = lumen_docs / "settings.png"
+    if lumen and settings.is_file():
+        build_gif(
+            lumen + [Image.open(settings)],
+            OUT_DIR / "lumen.gif",
+            hold_ms=2400,
+            crossfade=False,
+        )
+    else:
+        print("skip lumen — no frames, run capture-project-frames.mjs first")
 
     readme = Path("D:/VScode/dev/debug/roflo-pinterest/assets/readme")
     if readme.is_dir():

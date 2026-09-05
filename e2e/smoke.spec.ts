@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { PROJECTS } from "../data/projects";
 
 test.describe("navigation", () => {
   test("home page lists all tools and links work", async ({ page }) => {
@@ -28,19 +29,30 @@ test.describe("navigation", () => {
 });
 
 test.describe("projects page", () => {
+  // Driven from the data rather than a hand-written list of three titles and
+  // a hardcoded count: the previous version had to be edited in four places
+  // to add a project, and silently kept passing when one was missing.
   test("renders all project cards with a working GitHub link", async ({ page }) => {
     await page.goto("/projects");
-    await expect(page.getByRole("heading", { name: "The Counter Web" })).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Roflo Pinterest Wallpaper" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "DBD Perk Randomizer" }),
-    ).toBeVisible();
+    for (const project of PROJECTS) {
+      await expect(page.getByRole("heading", { name: project.title })).toBeVisible();
+    }
 
     const githubLinks = page.getByRole("link", { name: "GitHub" });
-    await expect(githubLinks).toHaveCount(3);
+    await expect(githubLinks).toHaveCount(PROJECTS.length);
     await expect(githubLinks.first()).toHaveAttribute("href", /github\.com/);
+  });
+
+  test("a desktop app offers a download, not a demo", async ({ page }) => {
+    await page.goto("/projects");
+    for (const project of PROJECTS.filter((p) => p.downloadUrl)) {
+      const card = page.locator(`[data-project="${project.slug}"]`);
+      await expect(card.getByRole("link", { name: "Скачать" })).toHaveAttribute(
+        "href",
+        project.downloadUrl!,
+      );
+      await expect(card.getByRole("link", { name: "Открыть демо" })).toHaveCount(0);
+    }
   });
 });
 
